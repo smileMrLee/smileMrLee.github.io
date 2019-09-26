@@ -4,14 +4,14 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="None">
         
         
-        <link rel="shortcut icon" href="img/favicon.ico">
-        <title>大世界，小人物（Big world, little person）</title>
-        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/base.css" rel="stylesheet">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>dubbo 服务正常注册和消费，但调用报错No provider - 大世界，小人物（Big world, little person）</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -19,13 +19,13 @@
             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
 
-        <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
-    <body class="homepage">
+    <body>
 
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
@@ -39,35 +39,35 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href=".">大世界，小人物（Big world, little person）</a>
+                    <a class="navbar-brand" href="../..">大世界，小人物（Big world, little person）</a>
                 </div>
 
                 <!-- Expanded navigation -->
                 <div class="navbar-collapse collapse">
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
-                            <li class="active">
-                                <a href=".">首页</a>
+                            <li >
+                                <a href="../..">首页</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">学习计划 <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li >
-    <a href="学习计划/2019年度学习计划/">2019年度学习计划</a>
+    <a href="../../学习计划/2019年度学习计划/">2019年度学习计划</a>
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">总结 <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li >
-    <a href="总结/dubbo 服务正常注册和消费，但调用报错No provider/">dubbo 服务正常注册和消费，但调用报错No provider</a>
+<li class="active">
+    <a href="./">dubbo 服务正常注册和消费，但调用报错No provider</a>
 </li>
                                     
 <li >
-    <a href="总结/spring boot应用无法启动，也没报错信息/">Spring boot应用无法启动，也没报错信息</a>
+    <a href="../spring boot应用无法启动，也没报错信息/">Spring boot应用无法启动，也没报错信息</a>
 </li>
                                 </ul>
                             </li>
@@ -79,13 +79,13 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li class="disabled">
-                                <a rel="next" >
+                            <li >
+                                <a rel="next" href="../../学习计划/2019年度学习计划/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li >
-                                <a rel="prev" href="学习计划/2019年度学习计划/">
+                                <a rel="prev" href="../spring boot应用无法启动，也没报错信息/">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -97,13 +97,45 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#_1">首页</a></li>
+        <li class="main active"><a href="#_1">问题现象</a></li>
+        <li class="main "><a href="#_2">排查分析</a></li>
+        <li class="main "><a href="#_3">解决方法</a></li>
+        <li class="main "><a href="#_4">总结</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="_1">首页</h1>
-<p>我们渺小，但不卑贱；我们平凡，但不平庸。 <a href="https://blog.csdn.net/li396864285">csdn博客</a>.</p></div>
+<h3 id="_1">问题现象</h3>
+<p>dubbo 服务提供者正常注册，消费者也正常消费，在dubbo-admin上观察没问题。本地服务proxy也正常生成，但无法调用成功。每次调用都是下面的错误信息：</p>
+<blockquote>
+<p>Failed to invoke the method getAllowUrls in the service com.xxx.bss.api.AcxxxQueryApi. No provider available for the service com.xxx.bss.api.AcxxxQueryApi:dev from registry 10.0.10.21:15311 on the consumer 10.200.190.182 using the dubbo version 2.6.4. Please check if the providers have been started and registered.</p>
+</blockquote>
+<p>这个问题隐蔽很，应用启动没问题，也无启动报错信息，甚至warn都没有。</p>
+<h3 id="_2">排查分析</h3>
+<p>项目在添加新的二方包之后，原来好好的dubbo忽然就调不通了。一开始以为只是个别服务，尝试了所有dubbo服务之后，都不成功。报错都是一样。检查了dubbo admin，发现提供者和消费者都正常。
+于是朝着包冲突方向去排查，把代码回退到可以正常调用dubbo服务的版本，也就是未添加新二方包的版本。</p>
+<p>于是分析可以调用的版本和调用失败的版本的包依赖。
+最后发现，不能正常调用的代码版本中，没有依赖netty-3.2.5.Final.jar 这个包，于是将该包手动强制依赖到项目中。就可以正常调用。</p>
+<p>正常情况下，dubbo 包都会传递依赖netty包进来的，为什么netty包会被干掉呢。仔细排查代码中也没有任何地方进行exclusion.于是怀疑是maven 仲裁的时候，选用了二方包依赖进来的包中某个包恰巧把netty包给干掉了。导致jar 包依赖短路，短路的包把依赖丢弃了。从而少了netty包。</p>
+<p>最后排查结果确实如此，是因为我新引进来的二方包，将dubbo 包的依赖全部进行exclusion了。</p>
+<p>如下图是包缺失的证据：
+<img alt="netty包缺失" src="/img/netty-jar-lost.png" />
+netty 包被二方包排除依赖的证据：
+<img alt="netty包被隐形排除" src="/img/netty-jar-exclusion.png" /></p>
+<h3 id="_3">解决方法</h3>
+<pre><code class="java">            &lt;dependency&gt;
+                &lt;groupId&gt;org.jboss.netty&lt;/groupId&gt;
+                &lt;artifactId&gt;netty&lt;/artifactId&gt;
+                &lt;version&gt;${netty_version}&lt;/version&gt;
+            &lt;/dependency&gt;
+&lt;netty_version&gt;3.2.5.Final&lt;/netty_version&gt;
+</code></pre>
+
+<p>即可解决。不同的dubbo 版本换成对应的netty版本即可。</p>
+<h3 id="_4">总结</h3>
+<p>虽然问题解决了，但是有必要说两句。
+1.二方包想要减少进入业务方代码，exclusion是好的想法，但exclusion不够彻底。如果直接exclusion掉dubbo，就不会造成maven仲裁选用缺失依赖的dubbo。
+2.dubbo 报错也不够友好，很明显这种异常并不是因为没有provider造成的，而是底层网络框架包丢失了。异常应该更加细化和详尽。</p></div>
         </div>
 
         <footer class="col-md-12">
@@ -111,11 +143,11 @@
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
         <script>
-            var base_url = ".",
+            var base_url = "../..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="js/base.js" defer></script>
-        <script src="search/main.js" defer></script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
     <div class="modal-dialog">
@@ -183,8 +215,3 @@
 
     </body>
 </html>
-
-<!--
-MkDocs version : 1.0.4
-Build Date UTC : 2019-09-26 09:59:32
--->
