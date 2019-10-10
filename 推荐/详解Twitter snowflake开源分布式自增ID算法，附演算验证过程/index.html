@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>详解Twitter snowflake开源分布式自增ID算法，附演算验证过程 - 大世界，小人物（Big world, little person）</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">大世界，小人物（Big world, little person）</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">首页</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">学习计划 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../学习计划/2019年度学习计划/">2019年度学习计划</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">总结 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../../总结/dubbo 服务正常注册和消费，但调用报错No provider/">dubbo 服务正常注册和消费，但调用报错No provider</a>
+</li>
+                                    
+<li >
+    <a href="../../总结/spring boot应用无法启动，也没报错信息/">Spring boot应用无法启动，也没报错信息</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">推荐 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li class="active">
+    <a href="./">详解Twitter snowflake开源分布式自增ID算法，附演算验证过程</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../../总结/spring boot应用无法启动，也没报错信息/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="disabled">
+                                <a rel="prev" >
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#1snowflake">1.snowflake简介</a></li>
+        <li class="main "><a href="#2snowflake">2.snowflake算法原理</a></li>
+        <li class="main "><a href="#3snowflakejava">3.snowflake算法源码（java版）</a></li>
+        <li class="main "><a href="#4snowflake">4.snowflake算法推导和演算过程</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h3 id="1snowflake">1.snowflake简介</h3>
+<p>​        互联网快速发展的今天，分布式应用系统已经见怪不怪，在分布式系统中，我们需要各种各样的ID，既然是ID那么必然是要保证全局唯一，除此之外，不同当业务还需要不同的特性，比如像并发巨大的业务要求ID生成效率高，吞吐大；比如某些银行类业务，需要按每日日期制定交易流水号；又比如我们希望用户的ID是随机的，无序的，纯数字的，且位数长度是小于10位的。等等，不同的业务场景需要的ID特性各不一样，于是，衍生了各种ID生成器，但大多数利用数据库控制ID的生成，性能受数据库并发能力限制，那么有没有一款不需要依赖任何中间件（如数据库，分布式缓存服务等）的ID生成器呢？本着取之于开源，用之于开源的原则，今天，特此介绍Twitter开源的一款分布式自增ID算法snowflake，并附上算法原理推导和演算过程！</p>
+<p><u>snowflake算法是一款本地生成的（ID生成过程不依赖任何中间件，无网络通信），保证ID全局唯一，并且ID总体有序递增，性能每秒生成300w＋。</u></p>
+<h3 id="2snowflake">2.snowflake算法原理</h3>
+<p>snowflake生产的ID是一个18位的long型数字，二进制结构表示如下(每部分用-分开):
+0 - 00000000 00000000 00000000 00000000 00000000 0 - 00000 - 00000 - 00000000 0000</p>
+<p>第一位未使用，接下来的41位为毫秒级时间(41位的长度可以使用69年，从1970-01-01 08:00:00)，然后是5位datacenterId（最大支持2^5＝32个，二进制表示从00000-11111，也即是十进制0-31），和5位workerId（最大支持2^5＝32个，原理同datacenterId），所以datacenterId*workerId最多支持部署1024个节点，最后12位是毫秒内的计数（12位的计数顺序号支持每个节点每毫秒产生2^12＝4096个ID序号）.</p>
+<p>所有位数加起来共64位，恰好是一个Long型（转换为字符串长度为18）.</p>
+<p>单台机器实例，通过时间戳保证前41位是唯一的，分布式系统多台机器实例下，通过对每个机器实例分配不同的datacenterId和workerId避免中间的10位碰撞。最后12位每毫秒从0递增生产ID，再提一次：每毫秒最多生成4096个ID，每秒可达4096000个。理论上，只要CPU计算能力足够，单机每秒可生产400多万个，实测300w+，效率之高由此可见。</p>
+<p>（该节改编自：http://www.cnblogs.com/relucent/p/4955340.html）</p>
+<h3 id="3snowflakejava">3.snowflake算法源码（java版）</h3>
+<pre><code class="java">@ToString
+@Slf4j
+public class SnowflakeIdFactory {
+
+    private final long twepoch = 1288834974657L;
+    private final long workerIdBits = 5L;
+    private final long datacenterIdBits = 5L;
+    private final long maxWorkerId = -1L ^ (-1L &lt;&lt; workerIdBits);
+    private final long maxDatacenterId = -1L ^ (-1L &lt;&lt; datacenterIdBits);
+    private final long sequenceBits = 12L;
+    private final long workerIdShift = sequenceBits;
+    private final long datacenterIdShift = sequenceBits + workerIdBits;
+    private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+    private final long sequenceMask = -1L ^ (-1L &lt;&lt; sequenceBits);
+
+    private long workerId;
+    private long datacenterId;
+    private long sequence = 0L;
+    private long lastTimestamp = -1L;
+
+
+
+    public SnowflakeIdFactory(long workerId, long datacenterId) {
+        if (workerId &gt; maxWorkerId || workerId &lt; 0) {
+            throw new IllegalArgumentException(String.format(&quot;worker Id can't be greater than %d or less than 0&quot;, maxWorkerId));
+        }
+        if (datacenterId &gt; maxDatacenterId || datacenterId &lt; 0) {
+            throw new IllegalArgumentException(String.format(&quot;datacenter Id can't be greater than %d or less than 0&quot;, maxDatacenterId));
+        }
+        this.workerId = workerId;
+        this.datacenterId = datacenterId;
+    }
+
+    public synchronized long nextId() {
+        long timestamp = timeGen();
+        if (timestamp &lt; lastTimestamp) {
+            //服务器时钟被调整了,ID生成器停止服务.
+            throw new RuntimeException(String.format(&quot;Clock moved backwards.  Refusing to generate id for %d milliseconds&quot;, lastTimestamp - timestamp));
+        }
+        if (lastTimestamp == timestamp) {
+            sequence = (sequence + 1) &amp; sequenceMask;
+            if (sequence == 0) {
+                timestamp = tilNextMillis(lastTimestamp);
+            }
+        } else {
+            sequence = 0L;
+        }
+
+        lastTimestamp = timestamp;
+        return ((timestamp - twepoch) &lt;&lt; timestampLeftShift) | (datacenterId &lt;&lt; datacenterIdShift) | (workerId &lt;&lt; workerIdShift) | sequence;
+    }
+
+    protected long tilNextMillis(long lastTimestamp) {
+        long timestamp = timeGen();
+        while (timestamp &lt;= lastTimestamp) {
+            timestamp = timeGen();
+        }
+        return timestamp;
+    }
+
+    protected long timeGen() {
+        return System.currentTimeMillis();
+    }
+
+    public static void testProductIdByMoreThread(int dataCenterId, int workerId, int n) throws InterruptedException {
+        List&lt;Thread&gt; tlist = new ArrayList&lt;&gt;();
+        Set&lt;Long&gt; setAll = new HashSet&lt;&gt;();
+        CountDownLatch cdLatch = new CountDownLatch(10);
+        long start = System.currentTimeMillis();
+        int threadNo = dataCenterId;
+        Map&lt;String,SnowflakeIdFactory&gt; idFactories = new HashMap&lt;&gt;();
+        for(int i=0;i&lt;10;i++){
+            //用线程名称做map key.
+            idFactories.put(&quot;snowflake&quot;+i,new SnowflakeIdFactory(workerId, threadNo++));
+        }
+        for(int i=0;i&lt;10;i++){
+            Thread temp =new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Set&lt;Long&gt; setId = new HashSet&lt;&gt;();
+                    SnowflakeIdFactory idWorker = idFactories.get(Thread.currentThread().getName());
+                    for(int j=0;j&lt;n;j++){
+                        setId.add(idWorker.nextId());
+                    }
+                    synchronized (setAll){
+                        setAll.addAll(setId);
+                        log.info(&quot;{}生产了{}个id,并成功加入到setAll中.&quot;,Thread.currentThread().getName(),n);
+                    }
+                    cdLatch.countDown();
+                }
+            },&quot;snowflake&quot;+i);
+            tlist.add(temp);
+        }
+        for(int j=0;j&lt;10;j++){
+            tlist.get(j).start();
+        }
+        cdLatch.await();
+
+        long end1 = System.currentTimeMillis() - start;
+
+        log.info(&quot;共耗时:{}毫秒,预期应该生产{}个id, 实际合并总计生成ID个数:{}&quot;,end1,10*n,setAll.size());
+
+    }
+
+    public static void testProductId(int dataCenterId, int workerId, int n){
+        SnowflakeIdFactory idWorker = new SnowflakeIdFactory(workerId, dataCenterId);
+        SnowflakeIdFactory idWorker2 = new SnowflakeIdFactory(workerId+1, dataCenterId);
+        Set&lt;Long&gt; setOne = new HashSet&lt;&gt;();
+        Set&lt;Long&gt; setTow = new HashSet&lt;&gt;();
+        long start = System.currentTimeMillis();
+        for (int i = 0; i &lt; n; i++) {
+            setOne.add(idWorker.nextId());//加入set
+        }
+        long end1 = System.currentTimeMillis() - start;
+        log.info(&quot;第一批ID预计生成{}个,实际生成{}个&lt;&lt;&lt;&lt;*&gt;&gt;&gt;&gt;共耗时:{}&quot;,n,setOne.size(),end1);
+
+        for (int i = 0; i &lt; n; i++) {
+            setTow.add(idWorker2.nextId());//加入set
+        }
+        long end2 = System.currentTimeMillis() - start;
+        log.info(&quot;第二批ID预计生成{}个,实际生成{}个&lt;&lt;&lt;&lt;*&gt;&gt;&gt;&gt;共耗时:{}&quot;,n,setTow.size(),end2);
+
+        setOne.addAll(setTow);
+        log.info(&quot;合并总计生成ID个数:{}&quot;,setOne.size());
+
+    }
+
+    public static void testPerSecondProductIdNums(){
+        SnowflakeIdFactory idWorker = new SnowflakeIdFactory(1, 2);
+        long start = System.currentTimeMillis();
+        int count = 0;
+        for (int i = 0; System.currentTimeMillis()-start&lt;1000; i++,count=i) {
+            /**  测试方法一: 此用法纯粹的生产ID,每秒生产ID个数为300w+ */
+            idWorker.nextId();
+            /**  测试方法二: 在log中打印,同时获取ID,此用法生产ID的能力受限于log.error()的吞吐能力.
+             * 每秒徘徊在10万左右. */
+            //log.error(&quot;{}&quot;,idWorker.nextId());
+        }
+        long end = System.currentTimeMillis()-start;
+        System.out.println(end);
+        System.out.println(count);
+    }
+
+    public static void main(String[] args) {
+        /** case1: 测试每秒生产id个数?
+         *   结论: 每秒生产id个数300w+ */
+        //testPerSecondProductIdNums();
+
+        /** case2: 单线程-测试多个生产者同时生产N个id,验证id是否有重复?
+         *   结论: 验证通过,没有重复. */
+        //testProductId(1,2,10000);//验证通过!
+        //testProductId(1,2,20000);//验证通过!
+
+        /** case3: 多线程-测试多个生产者同时生产N个id, 全部id在全局范围内是否会重复?
+         *   结论: 验证通过,没有重复. */
+        try {
+            testProductIdByMoreThread(1,2,100000);//单机测试此场景,性能损失至少折半!
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+</code></pre>
+
+<p>测试用例：
+/** case1: 测试每秒生产id个数?</p>
+<ul>
+<li>结论: 每秒生产id个数300w+ */
+  //testPerSecondProductIdNums();</li>
+</ul>
+<p>/** case2: 单线程-测试多个生产者同时生产N个id,验证id是否有重复?</p>
+<ul>
+<li>结论: 验证通过,没有重复. */
+  //testProductId(1,2,10000);//验证通过!
+  //testProductId(1,2,20000);//验证通过!</li>
+</ul>
+<p>/** case3: 多线程-测试多个生产者同时生产N个id, 全部id在全局范围内是否会重复?</p>
+<ul>
+<li>结论: 验证通过,没有重复. */
+  try {
+   testProductIdByMoreThread(1,2,100000);//单机测试此场景,性能损失至少折半!
+  } catch (InterruptedException e) {
+   e.printStackTrace();
+  }</li>
+</ul>
+<h3 id="4snowflake">4.snowflake算法推导和演算过程</h3>
+<blockquote>
+<p>说明：</p>
+<p>演算使用的对象实例：SnowflakeIdFactory idWorker = new SnowflakeIdFactory(1, 2);</p>
+<p>运行时数据workerId＝1，datacenterId＝2，分别表示机器实例的生产者编号，数据中心编号；</p>
+<p>sequence＝0表示每毫秒生产ID从0开始计数递增；</p>
+</blockquote>
+<p>以下演算基于时间戳＝1482394743339时刻进行推导。</p>
+<p>一句话描述：以下演算模拟了1482394743339这一毫秒时刻，workerId＝1，datacenterId＝2的id生成器，生产第一个id的过程。</p>
+<p><img alt="算法原理推算" src="/img/snowflake.png" /></p>
+<p>（图片原创，转载请注明出处，画图不易，谢谢！）</p>
+<p>end！</p>
+<p>参考
+https://github.com/twitter/snowflake</p>
+<p>http://www.cnblogs.com/relucent/p/4955340.html </p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
