@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>数据库分库分表sharding jdbc实践 - 大世界，小人物</title>
+        <title>数据库分库分表sharding-jdbc实践 - 大世界，小人物</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -50,7 +50,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active">数据库分库分表sharding jdbc实践</a>
+    <a href="./" class="dropdown-item active">数据库分库分表sharding-jdbc实践</a>
 </li>
                                 </ul>
                             </li>
@@ -59,7 +59,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../../%E6%80%BB%E7%BB%93/dubbo%20%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E6%B3%A8%E5%86%8C%E5%92%8C%E6%B6%88%E8%B4%B9%EF%BC%8C%E4%BD%86%E8%B0%83%E7%94%A8%E6%8A%A5%E9%94%99No%20provider/" class="dropdown-item">dubbo 服务正常注册和消费，但调用报错No provider</a>
+    <a href="../../%E6%80%BB%E7%BB%93/dubbo%20%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E6%B3%A8%E5%86%8C%E5%92%8C%E6%B6%88%E8%B4%B9%EF%BC%8C%E4%BD%86%E8%B0%83%E7%94%A8%E6%8A%A5%E9%94%99No%20provider/" class="dropdown-item">问题现象</a>
 </li>
                                     
 <li>
@@ -72,7 +72,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../../%E6%8E%A8%E8%8D%90/%E8%AF%A6%E8%A7%A3Twitter%20snowflake%E5%BC%80%E6%BA%90%E5%88%86%E5%B8%83%E5%BC%8F%E8%87%AA%E5%A2%9EID%E7%AE%97%E6%B3%95%EF%BC%8C%E9%99%84%E6%BC%94%E7%AE%97%E9%AA%8C%E8%AF%81%E8%BF%87%E7%A8%8B/" class="dropdown-item">详解Twitter snowflake开源分布式自增ID算法，附演算验证过程</a>
+    <a href="../../%E6%8E%A8%E8%8D%90/%E8%AF%A6%E8%A7%A3Twitter%20snowflake%E5%BC%80%E6%BA%90%E5%88%86%E5%B8%83%E5%BC%8F%E8%87%AA%E5%A2%9EID%E7%AE%97%E6%B3%95%EF%BC%8C%E9%99%84%E6%BC%94%E7%AE%97%E9%AA%8C%E8%AF%81%E8%BF%87%E7%A8%8B/" class="dropdown-item">1.snowflake简介</a>
 </li>
                                 </ul>
                             </li>
@@ -112,13 +112,53 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
+            <li class="nav-item" data-level="1"><a href="#sharding-jdbc" class="nav-link">数据库分库分表sharding-jdbc实践</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             
+            <li class="nav-item" data-level="1"><a href="#_1" class="nav-link">开始前必读</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#github" class="nav-link">github开源地址</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#_2" class="nav-link">实战</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#1-pomsharding-jdbc-mybatis" class="nav-link">1. pom依赖引入sharding-jdbc 及 mybatis组件包</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2" class="nav-link">2. 配置数据源</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#3-databasetable" class="nav-link">3. 配置数据库database分库策略、表table分表策略</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#4" class="nav-link">4. 编码实现</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#5-http" class="nav-link">5. http调用验证</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h3 id="_1">开始前必读</h3>
+<h1 id="sharding-jdbc">数据库分库分表sharding-jdbc实践</h1>
+<h1 id="_1">开始前必读</h1>
+<h2 id="github">github开源地址</h2>
+<p>https://github.com/smileMrLee/sharding-jdbc-demo</p>
 <p>本项目基于 spring boot + sharding-jdbc + mybatis + mysql搭建，用作测试验证sharding-jdbc 实现数据库分库分表。
 下载启动本项目前，请先执行DDL.sql 初始化数据库。</p>
 <ul>
@@ -129,9 +169,9 @@
 <p>启动前，请先修改 mysql 连接信息，确保连接账号密码无误。</p>
 </li>
 </ul>
-<h3 id="_2">实战</h3>
+<h1 id="_2">实战</h1>
 <p>集成sharding-jdbc总共需要以下几步</p>
-<h4 id="1-pomsharding-jdbc-mybatis">1. pom依赖引入sharding-jdbc 及 mybatis组件包</h4>
+<h2 id="1-pomsharding-jdbc-mybatis">1. pom依赖引入sharding-jdbc 及 mybatis组件包</h2>
 <pre><code class="xml">    &lt;!-- mysql driver --&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;mysql&lt;/groupId&gt;
@@ -158,7 +198,7 @@
         &lt;!-- sharding-jdbc end --&gt;
 </code></pre>
 
-<h4 id="2">2. 配置数据源</h4>
+<h2 id="2">2. 配置数据源</h2>
 <pre><code class="properties"># test0数据源
 sharding.jdbc.datasource.test0.type=com.zaxxer.hikari.HikariDataSource
 sharding.jdbc.datasource.test0.driver-class-name=com.mysql.cj.jdbc.Driver
@@ -180,7 +220,7 @@ sharding.jdbc.datasource.test${n}.password=123456
 
 </code></pre>
 
-<h4 id="3-databasetable">3. 配置数据库database分库策略、表table分表策略</h4>
+<h2 id="3-databasetable">3. 配置数据库database分库策略、表table分表策略</h2>
 <pre><code class="properties"># 分库策略
 # 水平拆分的数据库（表） 配置分库，分库主要取决于id列
 sharding.jdbc.config.sharding.default-database-strategy.inline.sharding-column=id
@@ -193,7 +233,7 @@ sharding.jdbc.config.sharding.tables.t_car.actual-data-nodes=test$-&gt;{0..2}.t_
 sharding.jdbc.config.sharding.tables.t_car.table-strategy.inline.sharding-column=count
 </code></pre>
 
-<h4 id="4">4. 编码实现</h4>
+<h2 id="4">4. 编码实现</h2>
 <ul>
 <li>
 <p>详细参考源码，entity 中表名使用逻辑表表名。
@@ -205,11 +245,9 @@ sharding.jdbc.config.sharding.tables.t_car.table-strategy.inline.sharding-column
 </li>
 </ul>
 <p>然后编写service 和 controller进行crud</p>
-<h4 id="5-http">5. http调用验证</h4>
+<h2 id="5-http">5. http调用验证</h2>
 <p>保存车辆信息：http://localhost:8080/car/save<br />
-   查询车辆列表：http://localhost:8080/car/get</p>
-<h4 id="6github">6.github开源地址</h4>
-<p>https://github.com/smileMrLee/sharding-jdbc-demo</p></div>
+   查询车辆列表：http://localhost:8080/car/get</p></div>
             </div>
         </div>
 
