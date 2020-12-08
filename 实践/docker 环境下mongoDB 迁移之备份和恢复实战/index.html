@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>个人学习计划 - 大世界，小人物</title>
+        <title>docker 环境下mongoDB 迁移之备份和恢复实战 - 大世界，小人物</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -36,29 +36,29 @@
                             <li class="navitem">
                                 <a href="../.." class="nav-link">smileMrLee</a>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">学习计划 <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active">个人学习计划</a>
+    <a href="../../%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/" class="dropdown-item">个人学习计划</a>
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">实践 <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../../%E5%AE%9E%E8%B7%B5/docker%20%E7%8E%AF%E5%A2%83%E4%B8%8BmongoDB%20%E8%BF%81%E7%A7%BB%E4%B9%8B%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E5%AE%9E%E6%88%98/" class="dropdown-item">docker 环境下mongoDB 迁移之备份和恢复实战</a>
+    <a href="./" class="dropdown-item active">docker 环境下mongoDB 迁移之备份和恢复实战</a>
 </li>
                                     
 <li>
-    <a href="../../%E5%AE%9E%E8%B7%B5/%E4%B8%80%E6%96%87%E5%BD%BB%E5%BA%95%E6%90%9E%E5%AE%9ASpring%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6/" class="dropdown-item">一文彻底搞定Spring事务传播机制</a>
+    <a href="../%E4%B8%80%E6%96%87%E5%BD%BB%E5%BA%95%E6%90%9E%E5%AE%9ASpring%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6/" class="dropdown-item">一文彻底搞定Spring事务传播机制</a>
 </li>
                                     
 <li>
-    <a href="../../%E5%AE%9E%E8%B7%B5/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8sharding-jdbc%E5%AE%9E%E8%B7%B5/" class="dropdown-item">数据库分库分表sharding-jdbc实践</a>
+    <a href="../%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8sharding-jdbc%E5%AE%9E%E8%B7%B5/" class="dropdown-item">数据库分库分表sharding-jdbc实践</a>
 </li>
                                 </ul>
                             </li>
@@ -93,12 +93,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../.." class="nav-link">
+                                <a rel="prev" href="../../%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../%E5%AE%9E%E8%B7%B5/docker%20%E7%8E%AF%E5%A2%83%E4%B8%8BmongoDB%20%E8%BF%81%E7%A7%BB%E4%B9%8B%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E5%AE%9E%E6%88%98/" class="nav-link">
+                                <a rel="next" href="../%E4%B8%80%E6%96%87%E5%BD%BB%E5%BA%95%E6%90%9E%E5%AE%9ASpring%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -120,31 +120,175 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
+            
+            <li class="nav-item" data-level="1"><a href="#1" class="nav-link">1.背景</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#2" class="nav-link">2.实战</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#21" class="nav-link">2.1 备份</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#22" class="nav-link">2.2 拷贝文件到目标机器</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#23" class="nav-link">2.3 恢复</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#24" class="nav-link">2.4 踩坑笔记</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h3 id="_1">个人长期学习计划</h3>
-<h4 id="_2">开源代码研究</h4>
+<h3 id="docker-mongodb">docker 环境下mongoDB 迁移之备份和恢复实战</h3>
+<h1 id="1">1.背景</h1>
+<p>需求是这样的，一个朋友最近在某云上通过代理商买了几台服务器，但是和原来的ECS 不在同一个区域。本着长期节约成本的原则，帮朋友搞全网迁移，其中本篇就是mongodb迁移备份还原实战，其中mongodb 为了运维省事，采用docker安装。但是不用担心，实际上docker 无非不过就是类似多一层ssh而已。</p>
+<p>我的任务就是将mongoDB从ZJK区迁移到HZ区。</p>
+<p>在迁移前，我们假设目标机器已经安装好版本一致的mongo，并且mongo已经启动。</p>
+<p>当然，如果还没有安装好，那么，请使用以下三种方式安装。</p>
 <ul>
-<li>学习ElasticSearch</li>
-<li>学习Dubbo源码</li>
-<li>学习RocketMQ源码</li>
-<li>学习Canal mysql binlog 订阅源码</li>
-<li>学习Netty 高级网络编程源码</li>
-<li>学习RabbitMQ</li>
-<li>学习docker</li>
-<li>学习K8S</li>
-<li>学习云原生 CI/CD</li>
-<li>学习高性能mysql</li>
-<li>学习数据库分库分表实战</li>
+<li>直接下载压缩包解压安装，下载地址：https://www.mongodb.com/download-center/community</li>
 </ul>
-<h4 id="_3">分布式技术学习</h4>
+<blockquote>
+<p>解压压缩包</p>
+<p>执行命令：sudo mv mongodb-osx-x86_64-4.0.9 /usr/local/mongodb-4.0.9</p>
+<p>配置~/.bash_profile 添加export PATH=/usr/local/mongodb-4.0.9/bin:$PATH</p>
+<p>如使用zsh，则在~/.zshrc 添加 export PATH=/usr/local/mongodb-4.0.9/bin:$PATH</p>
+</blockquote>
 <ul>
-<li>学习sentinel 限流、降级、熔断使用；</li>
+<li>
+<p>docker 方式安装 docker pull mongo:4.2.0-rc2-bionic </p>
+</li>
+<li>
+<p>使用brew 一键安装 brew install mongo （适合mac 本地安装）</p>
+</li>
 </ul>
-<p><img alt="科技图片" src="/img/tech.jpg" /></p></div>
+<h1 id="2">2.实战</h1>
+<h2 id="21">2.1 备份</h2>
+<p>使用命令先备份，上传文件到杭州区域ECS再导入备份</p>
+<ul>
+<li>登录到mongdb容器内</li>
+</ul>
+<blockquote>
+<p>docker exec -it 5f630f4b50d2 /bin/bash</p>
+<p>5f630f4b50d2  是容器的ID，也可以用容器name</p>
+</blockquote>
+<ul>
+<li>备份DB</li>
+</ul>
+<blockquote>
+<p>mongodump -h 127.0.0.1 --port 27017 -d record -u root -p=rpwd123 -o /backup --authenticationDatabase admin </p>
+</blockquote>
+<p>上述步骤将会在mongoDB容器内的/backup/ 目录下生成 record 目录，内部包含很多*.json文件。这些json文件就是备份好的文件。</p>
+<ul>
+<li>一键压缩备份文件夹</li>
+</ul>
+<blockquote>
+<p>tar -zcvf record.tar.gz backup/record</p>
+</blockquote>
+<h2 id="22">2.2 拷贝文件到目标机器</h2>
+<ul>
+<li>拷贝docker容器文件到真机路径</li>
+</ul>
+<blockquote>
+<p>docker cp 5f630f4b50d2:/root/backup/record.tar.gz ~/docker/lby-mongo</p>
+</blockquote>
+<ul>
+<li>发送文件到目标机器</li>
+</ul>
+<blockquote>
+<p>scp record.tar.gz root@218.2<em><em>.</em>.1</em>:/root/docker/mongo </p>
+</blockquote>
+<ul>
+<li>将目标机器上备份文件拷贝到容器</li>
+</ul>
+<blockquote>
+<p>docker cp record.tar.gz 605d3a9126cb:/backup/</p>
+</blockquote>
+<h2 id="23">2.3 恢复</h2>
+<ul>
+<li>进入目标机器容器内部</li>
+</ul>
+<blockquote>
+<p>docker exec -it 605d3a9126cb /bin/bash</p>
+</blockquote>
+<ul>
+<li>解压文件</li>
+</ul>
+<p>gunzip record.tar.gz  </p>
+<p>tar -xvf record.tar</p>
+<ul>
+<li>登录mongo、创建账号、数据库授权操作</li>
+</ul>
+<blockquote>
+<p>use admin</p>
+<p>db.createUser({user:'root',pwd:' **** ',roles:['userAdminAnyDatabase']})</p>
+<p>db.auth('root',' **** ')</p>
+</blockquote>
+<p>上述步骤将会创建一个超级用户root。该root用于管理admin 库里的用户及权限。</p>
+<blockquote>
+<p>db.createUser({ user: "anyadmin", pwd: "k<strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong>***q", roles: ['readWriteAnyDatabase'] })</p>
+</blockquote>
+<p>该步骤创建了一个用于管理全部DB的用户，接下来我们就可以用来anyadmin账号来进行恢复。</p>
+<ul>
+<li>创建一个同名DB</li>
+</ul>
+<p>在容器内执行</p>
+<blockquote>
+<p>mongo</p>
+<p>use record</p>
+<p>db.auth('anyadmin', 'k<strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong>***q')</p>
+<p>db.createCollection("demo")</p>
+</blockquote>
+<ul>
+<li>
+<p>用图形管理工具登录验证是否可以看到DB和集合（略）</p>
+</li>
+<li>
+<p>执行恢复操作</p>
+</li>
+</ul>
+<blockquote>
+<p>mongorestore -h localhost:27017 -d record  -u anyadmin -p=k<strong><em>*</em></strong><strong><em>*</em></strong>q --dir /backup/record --authenticationDatabase admin</p>
+</blockquote>
+<p>正常情况下，你按照上述步骤执行时，应该是一帆风顺的。但如果你不走运遇到了下面的错误。那么你就应该好好检查下，是否有按照上述步骤正确执行。</p>
+<h2 id="24">2.4 踩坑笔记</h2>
+<ul>
+<li>报错信息</li>
+</ul>
+<p>​        第一次恢复时，执行：<code>mongorestore -h localhost:27017 -d record --dir /backup/record</code> 没有使用用户认证方式报错如下：</p>
+<pre><code>2020-12-01T03:36:49.405+0000    Failed: record.send_record: error reading database: (Unauthorized) not authorized on record to execute command { listCollections: 1, filter: {}, $db: &quot;record&quot;, $readPreference: { mode: &quot;primaryPreferred&quot; } }
+2020-12-01T03:36:49.405+0000    0 document(s) restored successfully. 0 document(s) failed to restore.
+</code></pre>
+
+<p>第二次恢复时，执行： <code>mongorestore -h localhost:27017 -d record  -u l****  -p=k**** --dir /backup/record</code></p>
+<p>此时已然那会报错，报权限认证相关报错，只要加上 <code>--authenticationDatabase admin</code> 即可。</p>
+<p>此处的用户名和密码均是原来的db的用户名和密码。为了节约时间，我直接按照原db 用户名和密码在新的mongodb上创建并授权。</p>
+<p>再执行上述命令，终于成功。</p>
+<pre><code>2020-12-01T06:51:12.936+0000    no indexes to restore
+2020-12-01T06:51:12.936+0000    finished restoring record.2t0.cn (5287717 documents, 0 failures)
+****
+2020-12-01T06:52:51.920+0000    [######################..]  record.send_record  4.15GB/4.33GB  (95.8%)
+****
+2020-12-01T06:52:59.043+0000    [########################]  record.send_record  4.33GB/4.33GB  (100.0%)
+2020-12-01T06:52:59.043+0000    restoring indexes for collection record.send_record from metadata
+2020-12-01T06:53:52.512+0000    finished restoring record.send_record (4075860 documents, 0 failures)
+2020-12-01T06:53:52.512+0000    14808894 document(s) restored successfully. 0 document(s) failed to restore.
+</code></pre>
+
+<p>当然，整个迁移中其实还有很多坑的，比如安装docker时，由于需要配套使用docker-compose组件快捷部署容器，所以需要安装docker-compose，在安装的过程中遇到pip 命令不存在等问题。</p>
+<p>详见：<a href="https://changle.blog.csdn.net/article/details/110423558">[总结] 解决docker-compose 安装失败</a></p></div>
             </div>
         </div>
 

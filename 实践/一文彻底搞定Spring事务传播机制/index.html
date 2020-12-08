@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>一文彻底搞定Spring事务传播机制 - 大世界，小人物</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">大世界，小人物</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">smileMrLee</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">学习计划 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/" class="dropdown-item">个人学习计划</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">实践 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../docker%20%E7%8E%AF%E5%A2%83%E4%B8%8BmongoDB%20%E8%BF%81%E7%A7%BB%E4%B9%8B%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E5%AE%9E%E6%88%98/" class="dropdown-item">docker 环境下mongoDB 迁移之备份和恢复实战</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">一文彻底搞定Spring事务传播机制</a>
+</li>
+                                    
+<li>
+    <a href="../%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8sharding-jdbc%E5%AE%9E%E8%B7%B5/" class="dropdown-item">数据库分库分表sharding-jdbc实践</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">总结 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../%E6%80%BB%E7%BB%93/dubbo%20%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E6%B3%A8%E5%86%8C%E5%92%8C%E6%B6%88%E8%B4%B9%EF%BC%8C%E4%BD%86%E8%B0%83%E7%94%A8%E6%8A%A5%E9%94%99No%20provider/" class="dropdown-item">dubbo 服务正常注册和消费，但调用报错No provider</a>
+</li>
+                                    
+<li>
+    <a href="../../%E6%80%BB%E7%BB%93/spring%20boot%E5%BA%94%E7%94%A8%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%EF%BC%8C%E4%B9%9F%E6%B2%A1%E6%8A%A5%E9%94%99%E4%BF%A1%E6%81%AF/" class="dropdown-item">spring boot应用无法启动，也没报错信息</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">推荐 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../%E6%8E%A8%E8%8D%90/%E8%AF%A6%E8%A7%A3Twitter%20snowflake%E5%BC%80%E6%BA%90%E5%88%86%E5%B8%83%E5%BC%8F%E8%87%AA%E5%A2%9EID%E7%AE%97%E6%B3%95%EF%BC%8C%E9%99%84%E6%BC%94%E7%AE%97%E9%AA%8C%E8%AF%81%E8%BF%87%E7%A8%8B/" class="dropdown-item">详解Twitter snowflake开源分布式自增ID算法，附演算验证过程</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../docker%20%E7%8E%AF%E5%A2%83%E4%B8%8BmongoDB%20%E8%BF%81%E7%A7%BB%E4%B9%8B%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E5%AE%9E%E6%88%98/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8sharding-jdbc%E5%AE%9E%E8%B7%B5/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            
+            <li class="nav-item" data-level="2"><a href="#_1" class="nav-link">一、事务传播机制介绍</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#_2" class="nav-link">二、重点理解</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#_3" class="nav-link">三、编码验证</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#_4" class="nav-link">四、核心代码</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h3 id="spring">一文彻底搞定Spring事务传播机制</h3>
+<h2 id="_1">一、事务传播机制介绍</h2>
+<p>我们开发中经常遇到同时操作多张表，多次操作数据库，那么在很多场景下，当我们的业务需要嵌套调用事务方法，而其中某个方法出现异常的时候，会根据异常点出现的地方，适时调整回滚方案。是全量回滚还是只回滚某个点？此时spring 事务传播就可以完美解决此问题。</p>
+<p>以下是Spring boot 七大传播机制介绍：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>方法执行时-事务个数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Propagation.REQUIRED</td>
+<td>required 要求有事务，有事务则加入到事务，如果没有，则新建事务再执行。同时提交、同时回滚。</td>
+<td>1个事务</td>
+</tr>
+<tr>
+<td>Propagation.SUPORTS</td>
+<td>suports 支持在事务中运行，如果没有，就以非事务执行。有事务则同时提交，无事务互不影响。</td>
+<td>0或1个事务</td>
+</tr>
+<tr>
+<td>Propagation.MANDATORY</td>
+<td>mandatory 使用当前事务，如果没有事务，则抛出异常。同时提交、同时回滚。</td>
+<td>复用1个事务</td>
+</tr>
+<tr>
+<td>Propagation.REQUIRED_NEW</td>
+<td>required_new 无论有无事务，新建事务进行执行。两个独立事务互不影响。</td>
+<td>新建1个事务</td>
+</tr>
+<tr>
+<td>Propagation.NOT_SUPPORTED</td>
+<td>not_supported 不支持在事务中执行，如果存在事务，则挂起事务。事务回滚不影响子方法</td>
+<td>最多1个事务</td>
+</tr>
+<tr>
+<td>Propagation.NEVER</td>
+<td>never 不支持在事务中执行，如果有事务，则抛出异常。不需要事务，互不影响。</td>
+<td>必须0个事务</td>
+</tr>
+<tr>
+<td>Propagation.NESTED</td>
+<td>nested 如果当前存在事务，则嵌套事务执行，如果当前没有事务，则新建事务再执行。 主方法savepoint保存点异常，不影响主方法提交事务。主方法异常则整体回滚。</td>
+<td>嵌套事务，1个事务</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">二、重点理解</h2>
+<p>为了便于理解事务方法嵌套调用，特写伪编码如下：</p>
+<pre><code class="java">ServiceA{
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    methodA(Parmas ...){
+       doSomethingA(...);
+       // 此处嵌套调用服务B的事务方法
+       serviceB.methodB(params ...);       
+    }
+}
+
+ServiceB{
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.NESTED)
+    methodB(Params ...){
+        doSomethingB(...);
+    }
+}
+</code></pre>
+
+<p><img alt="点击并拖拽以移动" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" /></p>
+<p>两个事务之间，根本配置的传播机制不一样，而表现的结果不一样。</p>
+<p>其他的事务传播机制比如Required，Never等都好理解，参看上表，注意红色部分。一直以来，我个人发现虽然很早以前就认真学过，但每次重新看这块知识点的时候，尤其是对nested都会理解不准。</p>
+<p>为此，查阅了很多资料，同时，专门编码去验证该nested传播机制的特别之处。总之，你只要记住：</p>
+<p>NESTED的回滚特性</p>
+<ul>
+<li>主事务和嵌套事务属于同一个事务</li>
+<li>嵌套事务出错回滚不会影响到主事务</li>
+<li>主事务回滚会将嵌套事务一起回滚了</li>
+</ul>
+<p>如果你还是不能很好理解和掌握，那么花上十分钟，下载项目，自己运行一下吧。</p>
+<h2 id="_3">三、编码验证</h2>
+<p>github地址：https://github.com/smileMrLee/spring-nested-demo</p>
+<p>上面的demo中，我们设计两个接口test/required、test/nested 分别用来测试required和nested的传播机制。</p>
+<p>通过入参中的remark是否包含：childError 和 mainError 文本来控制主方法和子方法是否抛出异常，从而进行回滚。</p>
+<p><strong>required case1</strong></p>
+<p>required主方法和required子方法正常提交：http://localhost:8080/test/required?name=changle&amp;remark=required_required</p>
+<p><strong>required case2</strong></p>
+<p>required主方法因required子方法异常回滚：http://localhost:8080/test/required?name=lisi&amp;remark=required_required_childError</p>
+<p><strong>required Case3</strong></p>
+<p>required主方法异常连带required子方法异常回滚：http://localhost:8080/test/required?name=lisi&amp;remark=required_required_childError</p>
+<p><strong>nested Case1</strong></p>
+<p>required主方法正常提交-nested子方法异常回滚：http://localhost:8080/test/nested?name=lisi&amp;remark=required_required_childError</p>
+<p><strong>nested Case2</strong></p>
+<p>required主方法异常回滚-连带nested子方法回滚：http://localhost:8080/test/nested?name=lisi&amp;remark=required_required_mainError</p>
+<h2 id="_4">四、核心代码</h2>
+<p><strong>web controller</strong></p>
+<pre><code class="java">@Slf4j
+@RestController
+@RequestMapping(&quot;/test&quot;)
+public class CrudTestController {
+    @Resource
+    private UserService userService;
+
+    @GetMapping(&quot;/required&quot;)
+    public String required(String name, String remark){
+        try {
+            boolean result = userService.createUserRequired(name, remark);
+            if (result){
+                return &quot;成功&quot;;
+            }else {
+                return &quot;失败&quot;;
+            }
+        }catch (Exception e){
+            log.error(&quot;执行required事务例子异常&quot;, e);
+            return &quot;异常&quot;;
+        }
+    }
+
+    @GetMapping(&quot;/nested&quot;)
+    public String nested(String name, String remark){
+        try {
+            boolean result = userService.createUserNested(name, remark);
+            if (result){
+                return &quot;成功&quot;;
+            }else {
+                return &quot;失败&quot;;
+            }
+        }catch (Exception e){
+            log.error(&quot;执行nested事务例子异常&quot;, e);
+            return &quot;异常&quot;;
+        }
+    }
+}
+</code></pre>
+
+<p><img alt="点击并拖拽以移动" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" /></p>
+<p><strong>serviceA main主方法嵌套调用</strong></p>
+<pre><code class="java">@Slf4j
+@Service
+public class UserService {
+    @Resource
+    private UserMapper userMapper;
+    @Resource
+    private UserMoneyService userMoneyService;
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    public Boolean createUserRequired(String userName, String remark){
+        UserPo userPo = UserPo.builder()
+                .userName(userName)
+                .realName(&quot;真实的&quot;+userName)
+                .passWord(&quot;REQUIRED&quot;)
+                .remark(&quot;REQUIRED:&quot; + remark).build();
+        userMapper.insert(userPo);
+        userMoneyService.createUserBalance(userPo.getId(), remark);
+        if (remark.contains(&quot;mainError&quot;)) {
+            throw new RuntimeException(&quot;mainMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    public Boolean createUserNested(String userName, String remark){
+        UserPo userPo = UserPo.builder()
+                .userName(userName)
+                .realName(&quot;真实的&quot;+userName)
+                .passWord(&quot;REQUIRED&quot;)
+                .remark(&quot;REQUIRED:&quot; + remark).build();
+        userMapper.insert(userPo);
+        try {
+            userMoneyService.createUserBalanceNested(userPo.getId(), remark);
+        }catch (Exception e){
+            log.error(&quot;创建用户余额时异常|userName:{},remark:{}&quot;, userName, remark, e);
+        }
+        if (remark.contains(&quot;mainError&quot;)) {
+            throw new RuntimeException(&quot;mainMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+}
+</code></pre>
+
+<p><img alt="点击并拖拽以移动" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" /></p>
+<p><strong>serviceB child子方法被嵌套调用</strong></p>
+<pre><code class="java">@Slf4j
+@Service
+public class UserMoneyService {
+    @Resource
+    private UserMoneyMapper userMoneyMapper;
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    public boolean createUserBalance(Integer userId, String remark){
+        userMoneyMapper.insert(UserMoneyPo.builder()
+                .userId(userId)
+                .balance(11)
+                .remark(&quot;REQUIRED:&quot;+remark).build());
+        if (remark.contains(&quot;childError&quot;)) {
+            throw new RuntimeException(&quot;childMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.NESTED)
+    public boolean createUserBalanceNested(Integer userId, String remark){
+        userMoneyMapper.insert(UserMoneyPo.builder()
+                .userId(userId)
+                .balance(11)
+                .remark(&quot;NESTED:&quot;+remark).build());
+        log.error(&quot;余额创建成功-------手动回滚-------&quot;);
+        if (remark.contains(&quot;childError&quot;)) {
+            throw new RuntimeException(&quot;childMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+
+}
+</code></pre>
+
+<p>本文源码：github地址：https://github.com/smileMrLee/spring-nested-demo</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
