@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Spring boot应用无法启动，也没报错信息 - 大世界，小人物</title>
+        <title>spring boot应用无法启动，也没报错信息 - 大世界，小人物</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -59,11 +59,11 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../dubbo%20%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E6%B3%A8%E5%86%8C%E5%92%8C%E6%B6%88%E8%B4%B9%EF%BC%8C%E4%BD%86%E8%B0%83%E7%94%A8%E6%8A%A5%E9%94%99No%20provider/" class="dropdown-item">问题现象</a>
+    <a href="../dubbo%20%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E6%B3%A8%E5%86%8C%E5%92%8C%E6%B6%88%E8%B4%B9%EF%BC%8C%E4%BD%86%E8%B0%83%E7%94%A8%E6%8A%A5%E9%94%99No%20provider/" class="dropdown-item">dubbo 服务正常注册和消费，但调用报错No provider</a>
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active">Spring boot应用无法启动，也没报错信息</a>
+    <a href="./" class="dropdown-item active">spring boot应用无法启动，也没报错信息</a>
 </li>
                                 </ul>
                             </li>
@@ -112,16 +112,40 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
+            <li class="nav-item" data-level="1"><a href="#spring-boot" class="nav-link">spring boot应用无法启动，也没报错信息</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#_1" class="nav-link">问题描述</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#_2" class="nav-link">举例说明</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#_3" class="nav-link">排查分析</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#_4" class="nav-link">解决方法</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#_5" class="nav-link">扩展验证</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h3 id="spring-boot">[总结]spring boot应用无法启动，也没报错信息</h3>
-<h4 id="_1">问题描述</h4>
+<h1 id="spring-boot">spring boot应用无法启动，也没报错信息</h1>
+<h2 id="_1">问题描述</h2>
 <p>springboot应用昨天还能正常好好启动，忽然之间就启动不了了，也不报任何错误，只见到控制台输出"Stopping service".这个问题已经连续出现过3次了，这次狠下决心要找出个所以然。</p>
 <p>在此，先说下个人经历的前面三次无法启动没有报错。</p>
-<h4 id="_2">举例说明</h4>
+<h2 id="_2">举例说明</h2>
 <p>第一次：和环境有关</p>
 <blockquote>
 <p>当某个中间件无法连接的时候，我们的同事在try catch中错误的使用了System.exit()导致异常;</p>
@@ -147,12 +171,12 @@ try{
 <p>先说结论：本次"无缘无故"无法启动的原因，其实是昨天笔者开发过程中，代码中添加了一个dubbo服务依赖，但是没有在dubbo xml文件中注册reference，所以导致依赖缺失，最终应用起不来。</p>
 <p>当然，和前面几次一样，控制台，日志文件，没有任何地方有错误信息输出。</p>
 </blockquote>
-<h4 id="_3">排查分析</h4>
+<h2 id="_3">排查分析</h2>
 <p>根据下面这篇文章，给出了提示。</p>
 <p>引用：SpringBoot启动项目后自动关闭: https://blog.csdn.net/laoxilaoxi_/article/details/83654186</p>
 <p>先说结论：不是没有输出异常，是新版本的Spring boot 在出错后，不再输出错误到控制台了，而是将异常在Application main方法中抛出。</p>
 <p><strong><em>划重点：新版本Spring boot 2.x 不再输出错误到日志中，将异常在Application main方法中抛出。</em></strong> 而低版本Spring boot 1.3.x，1.4.x版本，是会直接在控制台输出错误的。</p>
-<h4 id="_4">解决方法</h4>
+<h2 id="_4">解决方法</h2>
 <p><strong>解决：</strong>有了上面的灵感，那好办我在main 启动方法中捕捉，自己打印，不就能看出来错误原因了吗？</p>
 <p>事实上，确实应该如此。</p>
 <p>最后，笔者在main方法启动spring boot 时，进行一场捕捉并输出日志。然后错误就一目了然了。</p>
@@ -180,7 +204,7 @@ org.springframework.beans.factory.BeanCreationException: Error creating bean wit
     at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1336) ~[spring-beans-5.0.10.RELEASE.jar:5.0.10
 </code></pre>
 
-<h4 id="_5">扩展验证</h4>
+<h2 id="_5">扩展验证</h2>
 <p>接下来让我们验证下低版本Spring boot 1.3.x，1.4.x版本，是否会直接在控制台输出错误。</p>
 <p>下面的实验是基于spring boot 1.4.7版本进行的，低版本的spring boot 都会在控制台或日志文件中先输出错误信息，再退出启动main方法。所以，对于从低版本升到高版本的，请在main启动时，自行捕捉异常。</p>
 <pre><code class="java">@Controller
