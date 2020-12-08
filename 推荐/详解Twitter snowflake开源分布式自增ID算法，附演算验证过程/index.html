@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>1.snowflake简介 - 大世界，小人物</title>
+        <title>详解Twitter snowflake开源分布式自增ID算法，附演算验证过程 - 大世界，小人物</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
                             <li class="navitem">
-                                <a href="../.." class="nav-link">首页</a>
+                                <a href="../.." class="nav-link">smileMrLee</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">学习计划 <b class="caret"></b></a>
@@ -72,7 +72,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active">1.snowflake简介</a>
+    <a href="./" class="dropdown-item active">详解Twitter snowflake开源分布式自增ID算法，附演算验证过程</a>
 </li>
                                 </ul>
                             </li>
@@ -112,17 +112,28 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#1snowflake" class="nav-link">1.snowflake简介</a>
+            
+            <li class="nav-item" data-level="2"><a href="#1snowflake" class="nav-link">1.snowflake简介</a>
               <ul class="nav flex-column">
               </ul>
             </li>
             
-            <li class="nav-item" data-level="1"><a href="#2snowflake" class="nav-link">2.snowflake算法原理</a>
+            <li class="nav-item" data-level="2"><a href="#2snowflake" class="nav-link">2.snowflake算法原理</a>
               <ul class="nav flex-column">
               </ul>
             </li>
             
-            <li class="nav-item" data-level="1"><a href="#3snowflakejava" class="nav-link">3.snowflake算法源码（java版）</a>
+            <li class="nav-item" data-level="2"><a href="#3snowflakejava" class="nav-link">3.snowflake算法源码（java版）</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#4snowflake" class="nav-link">4.snowflake算法推导和演算过程</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#_1" class="nav-link">参考</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -131,17 +142,18 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="1snowflake">1.snowflake简介</h1>
+<h3 id="twitter-snowflakeid">详解Twitter snowflake开源分布式自增ID算法，附演算验证过程</h3>
+<h2 id="1snowflake">1.snowflake简介</h2>
 <p>​        互联网快速发展的今天，分布式应用系统已经见怪不怪，在分布式系统中，我们需要各种各样的ID，既然是ID那么必然是要保证全局唯一，除此之外，不同当业务还需要不同的特性，比如像并发巨大的业务要求ID生成效率高，吞吐大；比如某些银行类业务，需要按每日日期制定交易流水号；又比如我们希望用户的ID是随机的，无序的，纯数字的，且位数长度是小于10位的。等等，不同的业务场景需要的ID特性各不一样，于是，衍生了各种ID生成器，但大多数利用数据库控制ID的生成，性能受数据库并发能力限制，那么有没有一款不需要依赖任何中间件（如数据库，分布式缓存服务等）的ID生成器呢？本着取之于开源，用之于开源的原则，今天，特此介绍Twitter开源的一款分布式自增ID算法snowflake，并附上算法原理推导和演算过程！</p>
 <p><u>snowflake算法是一款本地生成的（ID生成过程不依赖任何中间件，无网络通信），保证ID全局唯一，并且ID总体有序递增，性能每秒生成300w＋。</u></p>
-<h1 id="2snowflake">2.snowflake算法原理</h1>
+<h2 id="2snowflake">2.snowflake算法原理</h2>
 <p>snowflake生产的ID是一个18位的long型数字，二进制结构表示如下(每部分用-分开):
 0 - 00000000 00000000 00000000 00000000 00000000 0 - 00000 - 00000 - 00000000 0000</p>
 <p>第一位未使用，接下来的41位为毫秒级时间(41位的长度可以使用69年，从1970-01-01 08:00:00)，然后是5位datacenterId（最大支持2^5＝32个，二进制表示从00000-11111，也即是十进制0-31），和5位workerId（最大支持2^5＝32个，原理同datacenterId），所以datacenterId*workerId最多支持部署1024个节点，最后12位是毫秒内的计数（12位的计数顺序号支持每个节点每毫秒产生2^12＝4096个ID序号）.</p>
 <p>所有位数加起来共64位，恰好是一个Long型（转换为字符串长度为18）.</p>
 <p>单台机器实例，通过时间戳保证前41位是唯一的，分布式系统多台机器实例下，通过对每个机器实例分配不同的datacenterId和workerId避免中间的10位碰撞。最后12位每毫秒从0递增生产ID，再提一次：每毫秒最多生成4096个ID，每秒可达4096000个。理论上，只要CPU计算能力足够，单机每秒可生产400多万个，实测300w+，效率之高由此可见。</p>
 <p>（该节改编自：http://www.cnblogs.com/relucent/p/4955340.html）</p>
-<h1 id="3snowflakejava">3.snowflake算法源码（java版）</h1>
+<h2 id="3snowflakejava">3.snowflake算法源码（java版）</h2>
 <pre><code class="java">@ToString
 @Slf4j
 public class SnowflakeIdFactory {
@@ -328,7 +340,7 @@ public class SnowflakeIdFactory {
    e.printStackTrace();
   }</li>
 </ul>
-<h3 id="4snowflake">4.snowflake算法推导和演算过程</h3>
+<h2 id="4snowflake">4.snowflake算法推导和演算过程</h2>
 <blockquote>
 <p>说明：</p>
 <p>演算使用的对象实例：SnowflakeIdFactory idWorker = new SnowflakeIdFactory(1, 2);</p>
@@ -340,8 +352,8 @@ public class SnowflakeIdFactory {
 <p><img alt="算法原理推算" src="/img/snowflake.png" /></p>
 <p>（图片原创，转载请注明出处，画图不易，谢谢！）</p>
 <p>end！</p>
-<p>参考
-https://github.com/twitter/snowflake</p>
+<h2 id="_1">参考</h2>
+<p>https://github.com/twitter/snowflake</p>
 <p>http://www.cnblogs.com/relucent/p/4955340.html </p></div>
             </div>
         </div>
