@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>docker 环境下mongoDB 迁移之备份和恢复实战 - 大世界，小人物</title>
+        <title>Mac 使用charles抓包指南 - 大世界，小人物</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -82,11 +82,11 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active">docker 环境下mongoDB 迁移之备份和恢复实战</a>
+    <a href="../docker%20%E7%8E%AF%E5%A2%83%E4%B8%8BmongoDB%20%E8%BF%81%E7%A7%BB%E4%B9%8B%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E5%AE%9E%E6%88%98/" class="dropdown-item">docker 环境下mongoDB 迁移之备份和恢复实战</a>
 </li>
                                     
 <li>
-    <a href="../mac%20%E4%BD%BF%E7%94%A8charles%E6%8A%93%E5%8C%85%E6%8C%87%E5%8D%97/" class="dropdown-item">Mac 使用charles抓包指南</a>
+    <a href="./" class="dropdown-item active">Mac 使用charles抓包指南</a>
 </li>
                                     
 <li>
@@ -129,12 +129,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../../%E5%AD%A6%E4%B9%A0ing/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92/" class="nav-link">
+                                <a rel="prev" href="../docker%20%E7%8E%AF%E5%A2%83%E4%B8%8BmongoDB%20%E8%BF%81%E7%A7%BB%E4%B9%8B%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E5%AE%9E%E6%88%98/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../mac%20%E4%BD%BF%E7%94%A8charles%E6%8A%93%E5%8C%85%E6%8C%87%E5%8D%97/" class="nav-link">
+                                <a rel="next" href="../%E4%B8%80%E6%96%87%E5%BD%BB%E5%BA%95%E6%90%9E%E5%AE%9ASpring%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -156,30 +156,18 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            
-            <li class="nav-item" data-level="1"><a href="#1" class="nav-link">1.背景</a>
+            <li class="nav-item" data-level="2"><a href="#1charles" class="nav-link">1.安装charles（破解版）</a>
               <ul class="nav flex-column">
               </ul>
             </li>
             
-            <li class="nav-item" data-level="1"><a href="#2" class="nav-link">2.实战</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#21" class="nav-link">2.1 备份</a>
+            <li class="nav-item" data-level="2"><a href="#2charlespc" class="nav-link">2.使用charles抓包PC端请求</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#22" class="nav-link">2.2 拷贝文件到目标机器</a>
+            
+            <li class="nav-item" data-level="2"><a href="#3charles" class="nav-link">3.使用charles抓包手机端请求</a>
               <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#23" class="nav-link">2.3 恢复</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#24" class="nav-link">2.4 踩坑笔记</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
               </ul>
             </li>
         </ul>
@@ -187,144 +175,69 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h3 id="docker-mongodb">docker 环境下mongoDB 迁移之备份和恢复实战</h3>
-<h1 id="1">1.背景</h1>
-<p>需求是这样的，一个朋友最近在某云上通过代理商买了几台服务器，但是和原来的ECS 不在同一个区域。本着长期节约成本的原则，帮朋友搞全网迁移，其中本篇就是mongodb迁移备份还原实战，其中mongodb 为了运维省事，采用docker安装。但是不用担心，实际上docker 无非不过就是类似多一层ssh而已。</p>
-<p>我的任务就是将mongoDB从ZJK区迁移到HZ区。</p>
-<p>在迁移前，我们假设目标机器已经安装好版本一致的mongo，并且mongo已经启动。</p>
-<p>当然，如果还没有安装好，那么，请使用以下三种方式安装。</p>
-<ul>
-<li>直接下载压缩包解压安装，下载地址：https://www.mongodb.com/download-center/community</li>
-</ul>
-<blockquote>
-<p>解压压缩包</p>
-<p>执行命令：sudo mv mongodb-osx-x86_64-4.0.9 /usr/local/mongodb-4.0.9</p>
-<p>配置~/.bash_profile 添加export PATH=/usr/local/mongodb-4.0.9/bin:$PATH</p>
-<p>如使用zsh，则在~/.zshrc 添加 export PATH=/usr/local/mongodb-4.0.9/bin:$PATH</p>
-</blockquote>
-<ul>
-<li>
-<p>docker 方式安装 docker pull mongo:4.2.0-rc2-bionic </p>
-</li>
-<li>
-<p>使用brew 一键安装 brew install mongo （适合mac 本地安装）</p>
-</li>
-</ul>
-<h1 id="2">2.实战</h1>
-<h2 id="21">2.1 备份</h2>
-<p>使用命令先备份，上传文件到杭州区域ECS再导入备份</p>
-<ul>
-<li>登录到mongdb容器内</li>
-</ul>
-<blockquote>
-<p>docker exec -it 5f630f4b50d2 /bin/bash</p>
-<p>5f630f4b50d2  是容器的ID，也可以用容器name</p>
-</blockquote>
-<ul>
-<li>备份DB</li>
-</ul>
-<blockquote>
-<p>mongodump -h 127.0.0.1 --port 27017 -d record -u root -p=rpwd123 -o /backup --authenticationDatabase admin </p>
-</blockquote>
-<p>上述步骤将会在mongoDB容器内的/backup/ 目录下生成 record 目录，内部包含很多*.json文件。这些json文件就是备份好的文件。</p>
-<ul>
-<li>一键压缩备份文件夹</li>
-</ul>
-<blockquote>
-<p>tar -zcvf record.tar.gz backup/record</p>
-</blockquote>
-<h2 id="22">2.2 拷贝文件到目标机器</h2>
-<ul>
-<li>拷贝docker容器文件到真机路径</li>
-</ul>
-<blockquote>
-<p>docker cp 5f630f4b50d2:/root/backup/record.tar.gz ~/docker/lby-mongo</p>
-</blockquote>
-<ul>
-<li>发送文件到目标机器</li>
-</ul>
-<blockquote>
-<p>scp record.tar.gz root@218.2<em><em>.</em>.1</em>:/root/docker/mongo </p>
-</blockquote>
-<ul>
-<li>将目标机器上备份文件拷贝到容器</li>
-</ul>
-<blockquote>
-<p>docker cp record.tar.gz 605d3a9126cb:/backup/</p>
-</blockquote>
-<h2 id="23">2.3 恢复</h2>
-<ul>
-<li>进入目标机器容器内部</li>
-</ul>
-<blockquote>
-<p>docker exec -it 605d3a9126cb /bin/bash</p>
-</blockquote>
-<ul>
-<li>解压文件</li>
-</ul>
-<p>gunzip record.tar.gz  </p>
-<p>tar -xvf record.tar</p>
-<ul>
-<li>登录mongo、创建账号、数据库授权操作</li>
-</ul>
-<blockquote>
-<p>use admin</p>
-<p>db.createUser({user:'root',pwd:' **** ',roles:['userAdminAnyDatabase']})</p>
-<p>db.auth('root',' **** ')</p>
-</blockquote>
-<p>上述步骤将会创建一个超级用户root。该root用于管理admin 库里的用户及权限。</p>
-<blockquote>
-<p>db.createUser({ user: "anyadmin", pwd: "k<strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong>***q", roles: ['readWriteAnyDatabase'] })</p>
-</blockquote>
-<p>该步骤创建了一个用于管理全部DB的用户，接下来我们就可以用来anyadmin账号来进行恢复。</p>
-<ul>
-<li>创建一个同名DB</li>
-</ul>
-<p>在容器内执行</p>
-<blockquote>
-<p>mongo</p>
-<p>use record</p>
-<p>db.auth('anyadmin', 'k<strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong>***q')</p>
-<p>db.createCollection("demo")</p>
-</blockquote>
+<h2 id="1charles">1.安装charles（破解版）</h2>
+<h3 id="11">1.1 下载</h3>
+<p><a href="https://download.csdn.net/download/kuangbenxiaozi_nan/10163099?utm_source=bbsseo">下载地址-> 戳我</a></p>
+<p>下载下来的文件内包含dmg安装包和破解的jar包。</p>
+<p>解压文件，并安装，得到的charles-proxy-4.2.1.dmg文件是安装包，charler.jar文件是破解jar包；</p>
+<h3 id="12">1.2 破解</h3>
+<p>打开mac 访达，找到【应用程序】，选中charles 右键
+<img alt="f22d7d031e662a7f0f46793eb5f6780d.png" src="/img/charles/图1.png" />
+点击”显示包内容“。</p>
+<p>于是进入到charles安装目录，将上一步下载得到的charles.jar 拷贝到Contents-&gt;java 下，系统提示文件已存在，选择替换覆盖。</p>
+<p>于是，你可能已经破解成功了，这里的可能要注意，如果是新版本mac的系统，此时打开charles会报”xxx文件已损坏……“。那么请继续看1.3小节。</p>
+<h3 id="13-mac">1.3 设置mac 打开任何来源</h3>
+<p>如果你遇到了无法打开charles，那是因为mac的安全问题捣鬼。
+只需一步就可以：
+1. 打开mac终端（，终端默认在“其他”中）；
+<img alt="4c1c4412e144d1ff69e23040e12a10c3.png" src="/img/charles/图2.png" /></p>
+<ol>
+<li>输入代码：sudo spctl --master-disable
+  （master前面为两个短横线）
+  执行命令时要求验证用户管理员密码，输入即可。</li>
+</ol>
+<p>此时打开”系统偏好设置“，查看”安全性与隐私“，已经能看到【任何来源】。</p>
+<h2 id="2charlespc">2.使用charles抓包PC端请求</h2>
+<p>PC端抓包很简单，如果你需要抓https的，可以按下面步骤操作下就可以了。</p>
+<h3 id="21">2.1 安装证书</h3>
+<p>点击”help“ -&gt; "SSL Proxying" -&gt; "Install Charles Root Certiflcate "
+<img alt="651a949952333204f02ba1aed0a8a6fc.png" src="/img/charles/图3.png" />
+弹框选择”系统“，此时证书是不被信任状态，右击charles 证书
+<img alt="4af3d356f11cf1d2eea73dfb3b5ffd1d.png" src="/img/charles/图4.png" />
+在此选择”始终信任“即可。
+<img alt="973d369a34bd4964cc15afc2216c6090.png" src="/img/charles/图5.png" /></p>
+<h3 id="22-ssl-proxying-settings">2.2 配置SSL proxying Settings</h3>
+<p>点击菜单”Proxy“ -&gt; SSL proxying Settings
+<img alt="286ae91f435d23833fa23a4511d4075c.png" src="/img/charles/图6.png" />
+输入需要抓取的站点</p>
+<h2 id="3charles">3.使用charles抓包手机端请求</h2>
+<p>抓取手机的原理很简单，主要原理是：
+1.我们在PC上启动charles，charles开放自己的代理端口（默认是8888）；
+2.然后确保手机和PC连接同一个wifi，也就是属于同一个局域网；
+3.此时手机连接charles 代理地址。charles方可代理抓取手机的请求。</p>
+<h3 id="31-charles">3.1 设置或检查charles</h3>
 <ul>
 <li>
-<p>用图形管理工具登录验证是否可以看到DB和集合（略）</p>
+<p>检查代理端口
+打开菜单”Proxy“ -&gt; "Proxy Settings"，如下图
+<img alt="e29634940a9a01c13cc28dc1f0020625.png" src="/img/charles/图7.png" />
+设置你想要的代理端口，或者继续使用默认的”8888“。</p>
 </li>
 <li>
-<p>执行恢复操作</p>
+<p>检查PC本机IP
+查看PC本机IP，菜单"help" -&gt; "Local IP Address" PC本机的IP地址，也即是charles的地址
+<img alt="90ac3224fcf6b42bd8c93562f1f8cb3f.png" src="/img/charles/图9.png" />
+这里的192.168.31.250就是我们手机即将可以使用的代理IP。</p>
 </li>
 </ul>
-<blockquote>
-<p>mongorestore -h localhost:27017 -d record  -u anyadmin -p=k<strong><em>*</em></strong><strong><em>*</em></strong>q --dir /backup/record --authenticationDatabase admin</p>
-</blockquote>
-<p>正常情况下，你按照上述步骤执行时，应该是一帆风顺的。但如果你不走运遇到了下面的错误。那么你就应该好好检查下，是否有按照上述步骤正确执行。</p>
-<h2 id="24">2.4 踩坑笔记</h2>
-<ul>
-<li>报错信息</li>
-</ul>
-<p>​        第一次恢复时，执行：<code>mongorestore -h localhost:27017 -d record --dir /backup/record</code> 没有使用用户认证方式报错如下：</p>
-<pre><code>2020-12-01T03:36:49.405+0000    Failed: record.send_record: error reading database: (Unauthorized) not authorized on record to execute command { listCollections: 1, filter: {}, $db: &quot;record&quot;, $readPreference: { mode: &quot;primaryPreferred&quot; } }
-2020-12-01T03:36:49.405+0000    0 document(s) restored successfully. 0 document(s) failed to restore.
-</code></pre>
-
-<p>第二次恢复时，执行： <code>mongorestore -h localhost:27017 -d record  -u l****  -p=k**** --dir /backup/record</code></p>
-<p>此时已然那会报错，报权限认证相关报错，只要加上 <code>--authenticationDatabase admin</code> 即可。</p>
-<p>此处的用户名和密码均是原来的db的用户名和密码。为了节约时间，我直接按照原db 用户名和密码在新的mongodb上创建并授权。</p>
-<p>再执行上述命令，终于成功。</p>
-<pre><code>2020-12-01T06:51:12.936+0000    no indexes to restore
-2020-12-01T06:51:12.936+0000    finished restoring record.2t0.cn (5287717 documents, 0 failures)
-****
-2020-12-01T06:52:51.920+0000    [######################..]  record.send_record  4.15GB/4.33GB  (95.8%)
-****
-2020-12-01T06:52:59.043+0000    [########################]  record.send_record  4.33GB/4.33GB  (100.0%)
-2020-12-01T06:52:59.043+0000    restoring indexes for collection record.send_record from metadata
-2020-12-01T06:53:52.512+0000    finished restoring record.send_record (4075860 documents, 0 failures)
-2020-12-01T06:53:52.512+0000    14808894 document(s) restored successfully. 0 document(s) failed to restore.
-</code></pre>
-
-<p>当然，整个迁移中其实还有很多坑的，比如安装docker时，由于需要配套使用docker-compose组件快捷部署容器，所以需要安装docker-compose，在安装的过程中遇到pip 命令不存在等问题。</p>
-<p>详见：<a href="https://changle.blog.csdn.net/article/details/110423558">[总结] 解决docker-compose 安装失败</a></p></div>
+<h3 id="32">3.2 设置手机代理</h3>
+<p>必须确保手机和PC连接的是同一个网络。
+按如下设置手机代理
+<img alt="58d95fdee06a580cc2b12b1d68a0a681.png" src="/img/charles/图10.png" /></p>
+<h3 id="33">3.3 抓包验证</h3>
+<p>手机上打开你需要抓包的应用，发起http request
+然后去charles上验证是否已经抓到包。</p>
+<p>祝愿你，一切顺利。</p></div>
             </div>
         </div>
 
