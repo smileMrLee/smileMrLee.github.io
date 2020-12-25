@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Mac 使用charles抓包指南 - 大世界，小人物</title>
+        <title>三十分钟彻底搞定spring 事务传播机制笔记 - 大世界，小人物</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -86,7 +86,7 @@
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active">Mac 使用charles抓包指南</a>
+    <a href="../mac%20%E4%BD%BF%E7%94%A8charles%E6%8A%93%E5%8C%85%E6%8C%87%E5%8D%97/" class="dropdown-item">Mac 使用charles抓包指南</a>
 </li>
                                     
 <li>
@@ -94,7 +94,7 @@
 </li>
                                     
 <li>
-    <a href="../%E4%B8%89%E5%8D%81%E5%88%86%E9%92%9F%E5%BD%BB%E5%BA%95%E6%90%9E%E5%AE%9Aspring%20%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6%E7%AC%94%E8%AE%B0/" class="dropdown-item">三十分钟彻底搞定spring 事务传播机制笔记</a>
+    <a href="./" class="dropdown-item active">三十分钟彻底搞定spring 事务传播机制笔记</a>
 </li>
                                     
 <li>
@@ -133,12 +133,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../docker%20%E7%8E%AF%E5%A2%83%E4%B8%8BmongoDB%20%E8%BF%81%E7%A7%BB%E4%B9%8B%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E5%AE%9E%E6%88%98/" class="nav-link">
+                                <a rel="prev" href="../%E4%B8%80%E6%96%87%E5%BD%BB%E5%BA%95%E6%90%9E%E5%AE%9ASpring%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../%E4%B8%80%E6%96%87%E5%BD%BB%E5%BA%95%E6%90%9E%E5%AE%9ASpring%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6/" class="nav-link">
+                                <a rel="next" href="../%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8sharding-jdbc%E5%AE%9E%E8%B7%B5/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -160,17 +160,22 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="2"><a href="#1charles" class="nav-link">1.安装charles（破解版）</a>
+            <li class="nav-item" data-level="2"><a href="#_1" class="nav-link">一、事务传播机制介绍</a>
               <ul class="nav flex-column">
               </ul>
             </li>
             
-            <li class="nav-item" data-level="2"><a href="#2charlespc" class="nav-link">2.使用charles抓包PC端请求</a>
+            <li class="nav-item" data-level="2"><a href="#_2" class="nav-link">二、重点理解</a>
               <ul class="nav flex-column">
               </ul>
             </li>
             
-            <li class="nav-item" data-level="2"><a href="#3charles" class="nav-link">3.使用charles抓包手机端请求</a>
+            <li class="nav-item" data-level="2"><a href="#_3" class="nav-link">三、编码验证</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="2"><a href="#_4" class="nav-link">四、核心代码</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -179,69 +184,222 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h2 id="1charles">1.安装charles（破解版）</h2>
-<h3 id="11">1.1 下载</h3>
-<p><a href="https://download.csdn.net/download/kuangbenxiaozi_nan/10163099?utm_source=bbsseo">下载地址-> 戳我</a></p>
-<p>下载下来的文件内包含dmg安装包和破解的jar包。</p>
-<p>解压文件，并安装，得到的charles-proxy-4.2.1.dmg文件是安装包，charler.jar文件是破解jar包；</p>
-<h3 id="12">1.2 破解</h3>
-<p>打开mac 访达，找到【应用程序】，选中charles 右键
-<img alt="f22d7d031e662a7f0f46793eb5f6780d.png" src="/img/charles/图1.png" />
-点击”显示包内容“。</p>
-<p>于是进入到charles安装目录，将上一步下载得到的charles.jar 拷贝到Contents-&gt;java 下，系统提示文件已存在，选择替换覆盖。</p>
-<p>于是，你可能已经破解成功了，这里的可能要注意，如果是新版本mac的系统，此时打开charles会报”xxx文件已损坏……“。那么请继续看1.3小节。</p>
-<h3 id="13-mac">1.3 设置mac 打开任何来源</h3>
-<p>如果你遇到了无法打开charles，那是因为mac的安全问题捣鬼。
-只需一步就可以：
-1. 打开mac终端（，终端默认在“其他”中）；
-<img alt="4c1c4412e144d1ff69e23040e12a10c3.png" src="/img/charles/图2.png" /></p>
-<ol>
-<li>输入代码：sudo spctl --master-disable
-  （master前面为两个短横线）
-  执行命令时要求验证用户管理员密码，输入即可。</li>
-</ol>
-<p>此时打开”系统偏好设置“，查看”安全性与隐私“，已经能看到【任何来源】。</p>
-<h2 id="2charlespc">2.使用charles抓包PC端请求</h2>
-<p>PC端抓包很简单，如果你需要抓https的，可以按下面步骤操作下就可以了。</p>
-<h3 id="21">2.1 安装证书</h3>
-<p>点击”help“ -&gt; "SSL Proxying" -&gt; "Install Charles Root Certiflcate "
-<img alt="651a949952333204f02ba1aed0a8a6fc.png" src="/img/charles/图3.png" />
-弹框选择”系统“，此时证书是不被信任状态，右击charles 证书
-<img alt="4af3d356f11cf1d2eea73dfb3b5ffd1d.png" src="/img/charles/图4.png" />
-在此选择”始终信任“即可。
-<img alt="973d369a34bd4964cc15afc2216c6090.png" src="/img/charles/图5.png" /></p>
-<h3 id="22-ssl-proxying-settings">2.2 配置SSL proxying Settings</h3>
-<p>点击菜单”Proxy“ -&gt; SSL proxying Settings
-<img alt="286ae91f435d23833fa23a4511d4075c.png" src="/img/charles/图6.png" />
-输入需要抓取的站点</p>
-<h2 id="3charles">3.使用charles抓包手机端请求</h2>
-<p>抓取手机的原理很简单，主要原理是：
-1.我们在PC上启动charles，charles开放自己的代理端口（默认是8888）；
-2.然后确保手机和PC连接同一个wifi，也就是属于同一个局域网；
-3.此时手机连接charles 代理地址。charles方可代理抓取手机的请求。</p>
-<h3 id="31-charles">3.1 设置或检查charles</h3>
+<h2 id="_1">一、事务传播机制介绍</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+<th>方法执行时-事务个数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Propagation.REQUIRED</td>
+<td>required 要求有事务，有事务则加入到事务，如果没有，则新建事务再执行。同时提交、同时回滚。</td>
+<td>1个事务</td>
+</tr>
+<tr>
+<td>Propagation.SUPORTS</td>
+<td>suports 支持在事务中运行，如果没有，就以非事务执行。有事务则同时提交，无事务互不影响。</td>
+<td>0或1个事务</td>
+</tr>
+<tr>
+<td>Propagation.MANDATORY</td>
+<td>mandatory 使用当前事务，如果没有事务，则抛出异常。同时提交、同时回滚。</td>
+<td>复用1个事务</td>
+</tr>
+<tr>
+<td>Propagation.REQUIRED_NEW</td>
+<td>required_new 无论有无事务，新建事务进行执行。两个独立事务互不影响。</td>
+<td>新建1个事务</td>
+</tr>
+<tr>
+<td>Propagation.NOT_SUPPORTED</td>
+<td>not_supported 不支持在事务中执行，如果存在事务，则挂起事务。事务回滚不影响子方法</td>
+<td>最多1个事务</td>
+</tr>
+<tr>
+<td>Propagation.NEVER</td>
+<td>never 不支持在事务中执行，如果有事务，则抛出异常。不需要事务，互不影响。</td>
+<td>必须0个事务</td>
+</tr>
+<tr>
+<td>Propagation.NESTED</td>
+<td>nested 如果当前存在事务，则嵌套事务执行，如果当前没有事务，则新建事务再执行。 主方法savepoint保存点异常，不影响主方法提交事务。主方法异常则整体回滚。</td>
+<td>嵌套事务，1个事务</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">二、重点理解</h2>
+<p>我们开发中经常遇到同时操作多张表，多次操作数据库，那么在很多场景下，当我们的业务需要嵌套调用事务方法，而其中某个方法出现异常的时候，会根据异常点出现的地方，适时调整回滚方案。是全量回滚还是只回滚某个点？此时spring 事务传播就可以完美解决此问题。</p>
+<p>伪编码如下：</p>
+<pre><code class="java">ServiceA{
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    methodA(Parmas ...){
+       doSomethingA(...);
+       // 此处嵌套调用服务B的事务方法
+       serviceB.methodB(params ...);       
+    }
+}
+
+ServiceB{
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.NESTED)
+    methodB(Params ...){
+        doSomethingB(...);
+    }
+}
+</code></pre>
+
+<p><img alt="点击并拖拽以移动" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" /></p>
+<p>两个事务之间，根本配置的传播机制不一样，而表现的结果不一样。</p>
+<p>其他的事务传播机制比如Required，Never等都好理解，参看上表，注意红色部分。一直以来，我个人发现虽然很早以前就认真学过，但每次重新看这块知识点的时候，尤其是对nested都会理解不准。</p>
+<p>为此，查阅了很多资料，同时，专门编码去验证该nested传播机制的特别之处。总之，你只要记住：</p>
+<p>NESTED的回滚特性</p>
 <ul>
-<li>
-<p>检查代理端口
-打开菜单”Proxy“ -&gt; "Proxy Settings"，如下图
-<img alt="e29634940a9a01c13cc28dc1f0020625.png" src="/img/charles/图7.png" />
-设置你想要的代理端口，或者继续使用默认的”8888“。</p>
-</li>
-<li>
-<p>检查PC本机IP
-查看PC本机IP，菜单"help" -&gt; "Local IP Address" PC本机的IP地址，也即是charles的地址
-<img alt="90ac3224fcf6b42bd8c93562f1f8cb3f.png" src="/img/charles/图9.png" />
-这里的192.168.31.250就是我们手机即将可以使用的代理IP。</p>
-</li>
+<li>主事务和嵌套事务属于同一个事务</li>
+<li>嵌套事务出错回滚不会影响到主事务</li>
+<li>主事务回滚会将嵌套事务一起回滚了</li>
 </ul>
-<h3 id="32">3.2 设置手机代理</h3>
-<p>必须确保手机和PC连接的是同一个网络。
-按如下设置手机代理
-<img alt="58d95fdee06a580cc2b12b1d68a0a681.png" src="/img/charles/图10.png" /></p>
-<h3 id="33">3.3 抓包验证</h3>
-<p>手机上打开你需要抓包的应用，发起http request
-然后去charles上验证是否已经抓到包。</p>
-<p>祝愿你，一切顺利。</p></div>
+<p>如果你还是不能很好理解和掌握，那么花上十分钟，下载项目，自己运行一下吧。</p>
+<h2 id="_3">三、编码验证</h2>
+<p>github地址：https://github.com/smileMrLee/spring-nested-demo</p>
+<p>上面的demo中，我们设计两个接口test/required、test/nested 分别用来测试required和nested的传播机制。</p>
+<p>通过入参中的remark是否包含：childError 和 mainError 文本来控制主方法和子方法是否抛出异常，从而进行回滚。</p>
+<p><strong>required case1</strong></p>
+<p>required主方法和required子方法正常提交：http://localhost:8080/test/required?name=changle&amp;remark=required_required</p>
+<p><strong>required case2</strong></p>
+<p>required主方法因required子方法异常回滚：http://localhost:8080/test/required?name=lisi&amp;remark=required_required_childError</p>
+<p><strong>required Case3</strong></p>
+<p>required主方法异常连带required子方法异常回滚：http://localhost:8080/test/required?name=lisi&amp;remark=required_required_childError</p>
+<p><strong>nested Case1</strong></p>
+<p>required主方法正常提交-nested子方法异常回滚：http://localhost:8080/test/nested?name=lisi&amp;remark=required_required_childError</p>
+<p><strong>nested Case2</strong></p>
+<p>required主方法异常回滚-连带nested子方法回滚：http://localhost:8080/test/nested?name=lisi&amp;remark=required_required_mainError</p>
+<h2 id="_4">四、核心代码</h2>
+<p><strong>web controller</strong></p>
+<pre><code>@Slf4j
+@RestController
+@RequestMapping(&quot;/test&quot;)
+public class CrudTestController {
+    @Resource
+    private UserService userService;
+
+    @GetMapping(&quot;/required&quot;)
+    public String required(String name, String remark){
+        try {
+            boolean result = userService.createUserRequired(name, remark);
+            if (result){
+                return &quot;成功&quot;;
+            }else {
+                return &quot;失败&quot;;
+            }
+        }catch (Exception e){
+            log.error(&quot;执行required事务例子异常&quot;, e);
+            return &quot;异常&quot;;
+        }
+    }
+
+    @GetMapping(&quot;/nested&quot;)
+    public String nested(String name, String remark){
+        try {
+            boolean result = userService.createUserNested(name, remark);
+            if (result){
+                return &quot;成功&quot;;
+            }else {
+                return &quot;失败&quot;;
+            }
+        }catch (Exception e){
+            log.error(&quot;执行nested事务例子异常&quot;, e);
+            return &quot;异常&quot;;
+        }
+    }
+}
+</code></pre>
+
+<p><img alt="点击并拖拽以移动" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" /></p>
+<p><strong>serviceA main主方法嵌套调用</strong></p>
+<pre><code>@Slf4j
+@Service
+public class UserService {
+    @Resource
+    private UserMapper userMapper;
+    @Resource
+    private UserMoneyService userMoneyService;
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    public Boolean createUserRequired(String userName, String remark){
+        UserPo userPo = UserPo.builder()
+                .userName(userName)
+                .realName(&quot;真实的&quot;+userName)
+                .passWord(&quot;REQUIRED&quot;)
+                .remark(&quot;REQUIRED:&quot; + remark).build();
+        userMapper.insert(userPo);
+        userMoneyService.createUserBalance(userPo.getId(), remark);
+        if (remark.contains(&quot;mainError&quot;)) {
+            throw new RuntimeException(&quot;mainMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    public Boolean createUserNested(String userName, String remark){
+        UserPo userPo = UserPo.builder()
+                .userName(userName)
+                .realName(&quot;真实的&quot;+userName)
+                .passWord(&quot;REQUIRED&quot;)
+                .remark(&quot;REQUIRED:&quot; + remark).build();
+        userMapper.insert(userPo);
+        try {
+            userMoneyService.createUserBalanceNested(userPo.getId(), remark);
+        }catch (Exception e){
+            log.error(&quot;创建用户余额时异常|userName:{},remark:{}&quot;, userName, remark, e);
+        }
+        if (remark.contains(&quot;mainError&quot;)) {
+            throw new RuntimeException(&quot;mainMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+}
+</code></pre>
+
+<p><img alt="点击并拖拽以移动" src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" /></p>
+<p><strong>serviceB child子方法被嵌套调用</strong></p>
+<pre><code>@Slf4j
+@Service
+public class UserMoneyService {
+    @Resource
+    private UserMoneyMapper userMoneyMapper;
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.REQUIRED)
+    public boolean createUserBalance(Integer userId, String remark){
+        userMoneyMapper.insert(UserMoneyPo.builder()
+                .userId(userId)
+                .balance(11)
+                .remark(&quot;REQUIRED:&quot;+remark).build());
+        if (remark.contains(&quot;childError&quot;)) {
+            throw new RuntimeException(&quot;childMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation= Propagation.NESTED)
+    public boolean createUserBalanceNested(Integer userId, String remark){
+        userMoneyMapper.insert(UserMoneyPo.builder()
+                .userId(userId)
+                .balance(11)
+                .remark(&quot;NESTED:&quot;+remark).build());
+        log.error(&quot;余额创建成功-------手动回滚-------&quot;);
+        if (remark.contains(&quot;childError&quot;)) {
+            throw new RuntimeException(&quot;childMethod 手动抛错&quot;);
+        }
+        return true;
+    }
+
+
+}
+</code></pre></div>
             </div>
         </div>
 
